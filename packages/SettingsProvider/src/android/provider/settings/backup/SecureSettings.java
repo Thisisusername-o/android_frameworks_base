@@ -219,5 +219,6 @@ public class SecureSettings {
         Settings.Secure.TETHERING_ALLOW_VPN_UPSTREAMS,
         Settings.Secure.GESTURE_NAVBAR_LENGTH_MODE,
         Settings.Secure.POWER_MENU_HIDE_ON_SECURE,
+        Settings.Secure.SHOW_WIFI_STANDARD_ICON,
     };
 }
