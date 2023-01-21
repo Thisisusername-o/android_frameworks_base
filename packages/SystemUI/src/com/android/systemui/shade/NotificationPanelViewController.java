@@ -50,6 +50,7 @@ import android.app.PendingIntent;
 import android.app.StatusBarManager;
 import android.content.ContentResolver;
 import android.database.ContentObserver;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -73,6 +74,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
+import android.text.TextUtils;
 import android.util.IndentingPrintWriter;
 import android.util.Log;
 import android.util.MathUtils;
@@ -5164,10 +5166,14 @@ public final class NotificationPanelViewController extends PanelViewController {
                 } else {
                     icon = mView.getContext().getPackageManager().getApplicationIcon(pkgname);
                 }
-            } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            } catch (NameNotFoundException e) {
+                return;
             }
-            if (row.getEntry().getSbn().getNotification().extras.getString("android.text") != null) {
-                reTickerContent = row.getEntry().getSbn().getNotification().extras.getString("android.text");
+            String content = row.getEntry().getSbn().getNotification().extras.getString("android.text");
+            if (!TextUtils.isEmpty(content)) {
+                reTickerContent = content;
+            } else {
+                return;
             }
             String reTickerAppName = row.getEntry().getSbn().getNotification().extras.getString("android.title");
             PendingIntent reTickerIntent = row.getEntry().getSbn().getNotification().contentIntent;
@@ -5180,9 +5186,9 @@ public final class NotificationPanelViewController extends PanelViewController {
                 col = row.getEntry().getSbn().getNotification().color;
                 mAppExceptions = mView.getContext().getResources().getStringArray(R.array.app_exceptions);
                 //check if we need to override the color
-                for (int i=0; i < mAppExceptions.length; i++) {
+                for (int i = 0; i < mAppExceptions.length; i++) {
                     if (mAppExceptions[i].contains(pkgname)) {
-                        col = Color.parseColor(mAppExceptions[i+=1]);
+                        col = Color.parseColor(mAppExceptions[i += 1]);
                     }
                 }
                 Drawable dw = mView.getContext().getDrawable(R.drawable.reticker_background);
